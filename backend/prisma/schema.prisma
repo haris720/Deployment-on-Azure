@@ -1,0 +1,222 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+model User {
+
+  id Int @id @default(autoincrement())
+
+  name String
+
+  email String @unique
+
+  password String
+
+  role Role @default(USER)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+
+  reviews Review[]
+
+  favorites Favorite[]
+
+  lists UserList[]
+
+  reservations Reservation[]
+}
+
+
+
+model Restaurant {
+
+  id Int @id @default(autoincrement())
+
+  name String
+
+  description String?
+
+  address String
+
+  city String
+
+  latitude Float?
+
+  longitude Float?
+
+  phone String?
+
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+
+  categoryId Int
+
+
+  category Category @relation(fields: [categoryId], references: [id])
+
+
+  reviews Review[]
+
+  favorites Favorite[]
+
+  images RestaurantImage[]
+
+  reservations Reservation[]
+}
+
+
+
+model Category {
+
+  id Int @id @default(autoincrement())
+
+  name String @unique
+
+
+  restaurants Restaurant[]
+
+}
+
+
+
+model Review {
+
+  id Int @id @default(autoincrement())
+
+
+  rating Int
+
+  comment String?
+
+
+  createdAt DateTime @default(now())
+
+
+  userId Int
+
+  restaurantId Int
+
+
+  user User @relation(fields: [userId], references: [id])
+
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+}
+
+
+
+model Favorite {
+
+  id Int @id @default(autoincrement())
+
+
+  userId Int
+
+  restaurantId Int
+
+
+  user User @relation(fields: [userId], references: [id])
+
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+
+  @@unique([userId, restaurantId])
+
+}
+
+
+
+model UserList {
+
+  id Int @id @default(autoincrement())
+
+
+  name String
+
+
+  userId Int
+
+
+  user User @relation(fields: [userId], references: [id])
+
+}
+
+
+
+model RestaurantImage {
+
+  id Int @id @default(autoincrement())
+
+
+  url String
+
+
+  restaurantId Int
+
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+}
+
+
+
+model Reservation {
+
+  id Int @id @default(autoincrement())
+
+
+  reservationDate DateTime
+
+  people Int
+
+
+  status ReservationStatus @default(PENDING)
+
+
+  userId Int
+
+  restaurantId Int
+
+
+  user User @relation(fields: [userId], references: [id])
+
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+}
+
+
+
+enum Role {
+
+ USER
+
+ ADMIN
+
+}
+
+
+
+enum ReservationStatus {
+
+ PENDING
+
+ CONFIRMED
+
+ CANCELLED
+
+}
