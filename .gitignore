@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+coverage/
+
+# Logs
+*.log
+logs/
+
+# Editors
+.vscode/
+.idea/
+
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# Prisma local files
+*.db
+*.db-journal
+
+# Temporary files
+tmp/
+temp/
+
+# SSH keys and certificates
+*.pem
+*.key
+*.crt
+
+# Azure
+.azure/
+
+# Test output
+playwright-report/
+test-results/
