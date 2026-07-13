@@ -1,44 +1,31 @@
-# Dependencies
+# Node
 node_modules/
+npm-debug.log
 
-# Environment variables
+
+# Environment
 .env
 .env.*
-!.env.example
 
-# Build output
+
+# Build
 dist/
 build/
-coverage/
+
 
 # Logs
-*.log
 logs/
+*.log
 
-# Editors
+
+# IDE
 .vscode/
 .idea/
 
-# Operating systems
+
+# OS
 .DS_Store
-Thumbs.db
 
-# Prisma local files
-*.db
-*.db-journal
 
-# Temporary files
-tmp/
-temp/
-
-# SSH keys and certificates
-*.pem
-*.key
-*.crt
-
-# Azure
-.azure/
-
-# Test output
-playwright-report/
-test-results/
+# Uploads
+backend/uploads/
