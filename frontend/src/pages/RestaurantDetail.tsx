@@ -17,6 +17,7 @@ import {
   useToggleFavorite,
   useCreateReservation,
 } from "@/hooks/useApi";
+import { motion } from "framer-motion";
 import {
   Button,
   Input,
@@ -24,6 +25,7 @@ import {
   ErrorState,
   Rating,
   cn,
+  EASE,
 } from "@/components/common/UI";
 import { apiError, imageUrl } from "@/api/axios";
 import { useAuth } from "@/store/auth.store";
@@ -59,9 +61,9 @@ function ReviewForm({ restaurantId }: { restaurantId: number }) {
   return (
     <form
       onSubmit={submit}
-      className="rounded-xl border border-line bg-white p-5"
+      className="rounded-2xl border border-line bg-surface p-6 shadow-soft"
     >
-      <p className="font-semibold">Write a review</p>
+      <p className="font-display text-lg font-semibold">Write a review</p>
 
       <div className="mt-3 flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -71,10 +73,10 @@ function ReviewForm({ restaurantId }: { restaurantId: number }) {
             onClick={() => setRating(star)}
             aria-label={`${star} star${star > 1 ? "s" : ""}`}
             aria-pressed={rating === star}
-            className="p-0.5 transition hover:scale-110"
+            className="p-0.5 transition-transform duration-200 hover:scale-125 active:scale-95"
           >
             <Star
-              size={26}
+              size={28}
               className={cn(
                 star <= rating
                   ? "fill-gold text-gold"
@@ -166,9 +168,9 @@ function ReservationForm({ restaurantId }: { restaurantId: number }) {
     <form
       noValidate
       onSubmit={submit}
-      className="sticky top-24 rounded-xl border border-line bg-white p-5 shadow-sm"
+      className="sticky top-24 rounded-2xl border border-line bg-surface p-6 shadow-lift"
     >
-      <p className="flex items-center gap-2 font-semibold">
+      <p className="font-display flex items-center gap-2 text-xl font-semibold">
         <CalendarDays size={18} className="text-brand" />
         Reserve a table
       </p>
@@ -279,13 +281,18 @@ export default function RestaurantDetail() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* gallery */}
-      <div className="overflow-hidden rounded-2xl">
+      <motion.div
+        initial={{ opacity: 0, scale: 1.02 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7, ease: EASE }}
+        className="overflow-hidden rounded-3xl shadow-lift"
+      >
         {images.length > 0 ? (
           <>
             <img
               src={imageUrl(images[activeImage].url)}
               alt={restaurant.name}
-              className="h-64 w-full object-cover sm:h-96"
+              className="h-64 w-full object-cover sm:h-[26rem]"
             />
 
             {images.length > 1 && (
@@ -311,11 +318,22 @@ export default function RestaurantDetail() {
             )}
           </>
         ) : (
-          <div className="flex h-64 items-center justify-center bg-gradient-to-br from-brand-600 to-brand-900 text-6xl font-bold text-white/90 sm:h-80">
-            {restaurant.name.charAt(0)}
+          <div className="relative flex h-64 items-center justify-center bg-gradient-to-br from-brand-700 via-brand to-brand-900 sm:h-96">
+            <span
+              className="absolute inset-0 opacity-[0.12]"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 25% 25%, white 1.5px, transparent 1.5px)",
+                backgroundSize: "26px 26px",
+              }}
+              aria-hidden
+            />
+            <span className="font-display text-8xl font-semibold text-white/95">
+              {restaurant.name.charAt(0).toUpperCase()}
+            </span>
           </div>
         )}
-      </div>
+      </motion.div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
@@ -327,7 +345,7 @@ export default function RestaurantDetail() {
                 </span>
               )}
 
-              <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
+              <h1 className="font-display mt-3 text-4xl font-semibold sm:text-5xl">
                 {restaurant.name}
               </h1>
 
@@ -358,14 +376,14 @@ export default function RestaurantDetail() {
 
           {restaurant.description && (
             <section className="mt-6">
-              <h2 className="text-lg font-semibold">About</h2>
+              <h2 className="font-display text-2xl font-semibold">About</h2>
               <p className="mt-2 leading-relaxed text-muted">
                 {restaurant.description}
               </p>
             </section>
           )}
 
-          <section className="mt-6 grid gap-3 rounded-xl border border-line bg-white p-5 sm:grid-cols-2">
+          <section className="mt-6 grid gap-4 rounded-2xl border border-line bg-surface p-6 shadow-soft sm:grid-cols-2">
             <p className="flex items-start gap-2 text-sm">
               <MapPin size={16} className="mt-0.5 shrink-0 text-brand" />
               <span>
@@ -410,7 +428,7 @@ export default function RestaurantDetail() {
 
           {/* reviews */}
           <section className="mt-8">
-            <h2 className="text-lg font-semibold">
+            <h2 className="font-display text-2xl font-semibold">
               Reviews{" "}
               {reviews.data && (
                 <span className="text-muted">({reviews.data.rating.count})</span>
@@ -443,13 +461,16 @@ export default function RestaurantDetail() {
                 </p>
               )}
 
-              {reviews.data?.reviews.map((review) => (
-                <article
+              {reviews.data?.reviews.map((review, i) => (
+                <motion.article
                   key={review.id}
-                  className="rounded-xl border border-line bg-white p-5"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: EASE, delay: i * 0.05 }}
+                  className="rounded-2xl border border-line bg-surface p-6 shadow-soft"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="grid h-9 w-9 place-items-center rounded-full bg-brand text-sm font-bold text-white">
+                    <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-brand-800 text-sm font-bold text-white shadow-soft">
                       {review.user.name.charAt(0).toUpperCase()}
                     </span>
 
@@ -468,11 +489,11 @@ export default function RestaurantDetail() {
                   </div>
 
                   {review.comment && (
-                    <p className="mt-3 text-sm leading-relaxed text-muted">
+                    <p className="mt-3 leading-relaxed text-ink-soft">
                       {review.comment}
                     </p>
                   )}
-                </article>
+                </motion.article>
               ))}
             </div>
           </section>
@@ -483,7 +504,7 @@ export default function RestaurantDetail() {
           {user ? (
             <ReservationForm restaurantId={restaurant.id} />
           ) : (
-            <div className="sticky top-24 rounded-xl border border-line bg-white p-5 text-center">
+            <div className="sticky top-24 rounded-2xl border border-line bg-surface p-6 text-center shadow-lift">
               <CalendarDays className="mx-auto text-brand" size={22} />
               <p className="mt-3 font-semibold">Reserve a table</p>
               <p className="mt-1 text-sm text-muted">

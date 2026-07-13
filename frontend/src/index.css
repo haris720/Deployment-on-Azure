@@ -1,40 +1,191 @@
 @import "tailwindcss";
 
-/* Design tokens. Tailwind 4 reads @theme and generates utilities from
-   it, so `bg-brand`, `text-gold` etc. work throughout the app. */
+/* ---------------------------------------------------------------------------
+   Design tokens. Tailwind 4 generates utilities from @theme, so `font-display`,
+   `bg-brand`, `shadow-lift` etc. are available everywhere.
+--------------------------------------------------------------------------- */
+
 @theme {
+  /* Type: an editorial serif for headlines, a geometric sans for everything
+     else. The pairing is what makes it read "restaurant guide" rather than
+     "admin tool". Both are self-hosted — no CDN, no layout shift. */
+  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", system-ui,
+    sans-serif;
+
+  /* Deep emerald — richer at the dark end so gradients have somewhere to go. */
   --color-brand-50: #f0fdfa;
-  --color-brand-100: #ccfbf1;
-  --color-brand-200: #99f6e4;
-  --color-brand-500: #14b8a6;
-  --color-brand-600: #0d9488;
+  --color-brand-100: #d3f5ef;
+  --color-brand-200: #a7e8de;
+  --color-brand-300: #6fd4c6;
+  --color-brand-400: #38b6a6;
+  --color-brand-500: #159a8b;
   --color-brand: #0f766e;
-  --color-brand-800: #115e59;
-  --color-brand-900: #134e4a;
+  --color-brand-700: #0d635d;
+  --color-brand-800: #0b4f4a;
+  --color-brand-900: #08312f;
+  --color-brand-950: #041d1c;
 
-  --color-gold: #f59e0b;
+  /* Warm gold for ratings and accents. */
   --color-gold-100: #fef3c7;
+  --color-gold-300: #fcd34d;
+  --color-gold: #f59e0b;
+  --color-gold-600: #d97706;
 
-  --color-canvas: #fafaf9;
-  --color-ink: #18181b;
-  --color-muted: #71717a;
+  /* Warm neutrals — a stone canvas is softer than pure grey. */
+  --color-canvas: #faf9f7;
+  --color-surface: #ffffff;
+  --color-ink: #1c1917;
+  --color-ink-soft: #44403c;
+  --color-muted: #78716c;
   --color-line: #e7e5e4;
+
+  /* Elevation: soft, layered, never harsh. */
+  --shadow-soft: 0 1px 2px rgb(28 25 23 / 0.04), 0 2px 8px rgb(28 25 23 / 0.04);
+  --shadow-lift: 0 2px 4px rgb(28 25 23 / 0.04), 0 12px 28px rgb(28 25 23 / 0.1);
+  --shadow-hero: 0 20px 60px -12px rgb(8 49 47 / 0.35);
+
+  /* One easing curve everywhere: calm, slightly weighted. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body {
-  margin: 0;
-  background: var(--color-canvas);
-  color: var(--color-ink);
-  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+
+/* These live in @layer base so Tailwind utilities still win. Unlayered CSS
+   beats layered utilities in Tailwind 4 — an unlayered `h1 { color: ink }`
+   would override `text-white` and black out the hero headline. */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headlines: the serif, optically tightened. Fraunces' variable axes let
+     us dial in a softer, warmer cut than the default. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 30, "WONK" 1;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
 }
 
-/* Respect users who ask for reduced motion. */
+/* Opt-in serif for non-heading elements (nav wordmark, empty states). */
+.font-display {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 30, "WONK" 1;
+  letter-spacing: -0.02em;
+}
+
+/* Tabular figures stop dashboard numbers from jittering as they update. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-brand-950);
+}
+
+/* A visible, on-brand focus ring — keyboard users are not second-class. */
+:focus-visible {
+  outline: 2px solid var(--color-brand-400);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Slim, unobtrusive scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+--------------------------------------------------------------------------- */
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Skeletons sweep rather than pulse — reads as "loading", not "broken". */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-line);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.65),
+    transparent
+  );
+  animation: shimmer 1.6s infinite;
+}
+
+@keyframes float-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-float-up {
+  animation: float-up 0.5s var(--ease-out-soft) both;
+}
+
+/* Underline that grows from the left on hover — used on text links. */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s var(--ease-out-soft);
+}
+
+.link-underline:hover {
+  background-size: 100% 1.5px;
+}
+
+/* Anyone who asks for less motion gets none of it. */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }

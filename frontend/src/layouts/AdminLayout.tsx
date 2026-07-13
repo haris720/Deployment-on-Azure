@@ -34,10 +34,10 @@ export default function AdminLayout() {
                 end={end}
                 className={({ isActive }) =>
                   cn(
-                    "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition",
+                    "flex shrink-0 items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all duration-200",
                     isActive
-                      ? "bg-brand text-white"
-                      : "text-ink hover:bg-stone-100",
+                      ? "bg-brand text-white shadow-soft"
+                      : "text-ink-soft hover:bg-stone-100 hover:text-ink",
                   )
                 }
               >

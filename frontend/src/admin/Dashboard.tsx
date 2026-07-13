@@ -56,7 +56,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <h1 className="font-display text-3xl font-semibold">Dashboard</h1>
       <p className="mt-1 text-sm text-muted">
         A live view of the whole platform.
       </p>
@@ -66,18 +66,20 @@ export default function Dashboard() {
           const card = (
             <div
               className={[
-                "rounded-xl border bg-white p-5 transition",
-                highlight
-                  ? "border-gold ring-1 ring-gold/40"
-                  : "border-line",
-                to ? "hover:border-brand hover:shadow-sm" : "",
+                "h-full rounded-2xl border bg-surface p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                highlight ? "border-gold/60 ring-1 ring-gold/25" : "border-line",
+                to ? "hover:-translate-y-1 hover:border-brand-200 hover:shadow-lift" : "",
               ].join(" ")}
             >
-              <Icon
-                size={18}
-                className={highlight ? "text-gold" : "text-brand"}
-              />
-              <p className="mt-3 text-3xl font-bold">{value}</p>
+              <span
+                className={[
+                  "grid h-10 w-10 place-items-center rounded-xl",
+                  highlight ? "bg-gold-100 text-gold-600" : "bg-brand-50 text-brand",
+                ].join(" ")}
+              >
+                <Icon size={18} />
+              </span>
+              <p className="tabular mt-4 text-3xl font-bold">{value}</p>
               <p className="text-sm text-muted">{label}</p>
             </div>
           );
@@ -93,7 +95,7 @@ export default function Dashboard() {
       </div>
 
       {data.pendingReservations > 0 && (
-        <div className="mt-6 rounded-xl border border-gold bg-gold-100 p-5">
+        <div className="mt-6 rounded-2xl border border-gold/50 bg-gold-100/70 p-6">
           <p className="font-semibold">
             {data.pendingReservations} reservation
             {data.pendingReservations === 1 ? "" : "s"} awaiting confirmation

@@ -6,9 +6,10 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import MainLayout from "@/layouts/MainLayout";
 import AdminLayout from "@/layouts/AdminLayout";
-import { Loader } from "@/components/common/UI";
+import { Loader, EASE } from "@/components/common/UI";
 import { useAuth, isAdmin } from "@/store/auth.store";
 
 // Route-level code splitting: the admin panel and detail pages are not
@@ -28,6 +29,19 @@ const AdminDashboard = lazy(() => import("@/admin/Dashboard"));
 const AdminUsers = lazy(() => import("@/admin/Users"));
 const AdminRestaurants = lazy(() => import("@/admin/Restaurants"));
 const AdminReservations = lazy(() => import("@/admin/Reservations"));
+
+/** Every page fades and rises in — navigation feels continuous, not stuttered. */
+function Page({ children }: { children: ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: EASE }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 /** Requires a logged-in user; remembers where they were headed. */
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -61,23 +75,62 @@ function RequireAdmin({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-export default function AppRoutes() {
+function AnimatedRoutes() {
+  const location = useLocation();
+
   return (
-    <BrowserRouter>
+    <AnimatePresence mode="wait">
       <Suspense fallback={<Loader />}>
-        <Routes>
+        <Routes location={location} key={location.pathname}>
           <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/restaurants" element={<Restaurants />} />
-            <Route path="/restaurants/:id" element={<RestaurantDetail />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route
+              path="/"
+              element={
+                <Page>
+                  <Home />
+                </Page>
+              }
+            />
+            <Route
+              path="/restaurants"
+              element={
+                <Page>
+                  <Restaurants />
+                </Page>
+              }
+            />
+            <Route
+              path="/restaurants/:id"
+              element={
+                <Page>
+                  <RestaurantDetail />
+                </Page>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <Page>
+                  <Login />
+                </Page>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <Page>
+                  <Register />
+                </Page>
+              }
+            />
 
             <Route
               path="/profile"
               element={
                 <RequireAuth>
-                  <Profile />
+                  <Page>
+                    <Profile />
+                  </Page>
                 </RequireAuth>
               }
             />
@@ -85,7 +138,9 @@ export default function AppRoutes() {
               path="/favorites"
               element={
                 <RequireAuth>
-                  <Favorites />
+                  <Page>
+                    <Favorites />
+                  </Page>
                 </RequireAuth>
               }
             />
@@ -93,7 +148,9 @@ export default function AppRoutes() {
               path="/lists"
               element={
                 <RequireAuth>
-                  <Lists />
+                  <Page>
+                    <Lists />
+                  </Page>
                 </RequireAuth>
               }
             />
@@ -101,12 +158,21 @@ export default function AppRoutes() {
               path="/reservations"
               element={
                 <RequireAuth>
-                  <Reservations />
+                  <Page>
+                    <Reservations />
+                  </Page>
                 </RequireAuth>
               }
             />
 
-            <Route path="*" element={<NotFound />} />
+            <Route
+              path="*"
+              element={
+                <Page>
+                  <NotFound />
+                </Page>
+              }
+            />
           </Route>
 
           <Route
@@ -116,13 +182,49 @@ export default function AppRoutes() {
               </RequireAdmin>
             }
           >
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/restaurants" element={<AdminRestaurants />} />
-            <Route path="/admin/reservations" element={<AdminReservations />} />
+            <Route
+              path="/admin"
+              element={
+                <Page>
+                  <AdminDashboard />
+                </Page>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <Page>
+                  <AdminUsers />
+                </Page>
+              }
+            />
+            <Route
+              path="/admin/restaurants"
+              element={
+                <Page>
+                  <AdminRestaurants />
+                </Page>
+              }
+            />
+            <Route
+              path="/admin/reservations"
+              element={
+                <Page>
+                  <AdminReservations />
+                </Page>
+              }
+            />
           </Route>
         </Routes>
       </Suspense>
+    </AnimatePresence>
+  );
+}
+
+export default function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
     </BrowserRouter>
   );
 }

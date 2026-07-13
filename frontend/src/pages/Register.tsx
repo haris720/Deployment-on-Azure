@@ -3,10 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { UtensilsCrossed } from "lucide-react";
+import { motion } from "framer-motion";
+import { UtensilsCrossed, ArrowRight } from "lucide-react";
 import api, { apiError } from "@/api/axios";
 import { useAuth } from "@/store/auth.store";
-import { Button, Input, ErrorState } from "@/components/common/UI";
+import { Button, Input, ErrorState, EASE } from "@/components/common/UI";
 import type { AuthResponse } from "@/types";
 
 // Mirrors the backend's registerSchema, so the user sees the rule
@@ -55,14 +56,23 @@ export default function Register() {
   };
 
   return (
-    <div className="mx-auto flex max-w-md flex-col justify-center px-4 py-16">
-      <div className="mb-8 text-center">
-        <UtensilsCrossed className="mx-auto text-brand" size={34} />
-        <h1 className="mt-3 text-3xl font-bold">Create your account</h1>
-        <p className="mt-1 text-sm text-muted">
-          Save favorites, write reviews and reserve tables.
+    <div className="mx-auto flex max-w-md flex-col justify-center px-4 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE }}
+        className="mb-8 text-center"
+      >
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-800 text-white shadow-lift">
+          <UtensilsCrossed size={24} />
+        </span>
+        <h1 className="font-display mt-5 text-4xl font-semibold">
+          Create your account
+        </h1>
+        <p className="mt-2 text-muted">
+          Save favourites, write reviews and reserve tables.
         </p>
-      </div>
+      </motion.div>
 
       {error && (
         <div className="mb-4">
@@ -72,10 +82,13 @@ export default function Register() {
 
       {/* noValidate: zod owns validation here — the browser's native
           type="email" check would otherwise block submit silently. */}
-      <form
+      <motion.form
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
         noValidate
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 rounded-xl border border-line bg-white p-6"
+        className="space-y-4 rounded-2xl border border-line bg-surface p-7 shadow-soft"
       >
         <Input
           label="Name"
@@ -112,14 +125,20 @@ export default function Register() {
           {...register("confirmPassword")}
         />
 
-        <Button type="submit" loading={isSubmitting} className="w-full">
+        <Button
+          type="submit"
+          size="lg"
+          loading={isSubmitting}
+          className="w-full"
+        >
           Create account
+          <ArrowRight size={16} />
         </Button>
-      </form>
+      </motion.form>
 
-      <p className="mt-6 text-center text-sm text-muted">
+      <p className="mt-7 text-center text-sm text-muted">
         Already have an account?{" "}
-        <Link to="/login" className="font-semibold text-brand hover:underline">
+        <Link to="/login" className="link-underline font-semibold text-brand">
           Log in
         </Link>
       </p>

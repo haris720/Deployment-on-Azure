@@ -3,10 +3,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { UtensilsCrossed } from "lucide-react";
+import { motion } from "framer-motion";
+import { UtensilsCrossed, ArrowRight } from "lucide-react";
 import api, { apiError } from "@/api/axios";
 import { useAuth } from "@/store/auth.store";
-import { Button, Input, ErrorState } from "@/components/common/UI";
+import { Button, Input, ErrorState, EASE } from "@/components/common/UI";
 import type { AuthResponse } from "@/types";
 
 const schema = z.object({
@@ -47,19 +48,32 @@ export default function Login() {
   };
 
   return (
-    <div className="mx-auto flex max-w-md flex-col justify-center px-4 py-16">
-      <div className="mb-8 text-center">
-        <UtensilsCrossed className="mx-auto text-brand" size={34} />
-        <h1 className="mt-3 text-3xl font-bold">Welcome back</h1>
-        <p className="mt-1 text-sm text-muted">
-          Log in to book tables and save your favorites.
+    <div className="mx-auto flex max-w-md flex-col justify-center px-4 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE }}
+        className="mb-8 text-center"
+      >
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-800 text-white shadow-lift">
+          <UtensilsCrossed size={24} />
+        </span>
+        <h1 className="font-display mt-5 text-4xl font-semibold">
+          Welcome back
+        </h1>
+        <p className="mt-2 text-muted">
+          Log in to book tables and save your favourites.
         </p>
-      </div>
+      </motion.div>
 
       {expired && (
-        <p className="mb-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+        <motion.p
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 rounded-xl bg-gold-100 p-3.5 text-sm font-medium text-gold-600"
+        >
           Your session expired. Please log in again.
-        </p>
+        </motion.p>
       )}
 
       {error && (
@@ -70,10 +84,13 @@ export default function Login() {
 
       {/* noValidate: the browser's own type="email" check would block
           submission before zod runs, so our messages would never show. */}
-      <form
+      <motion.form
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
         noValidate
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 rounded-xl border border-line bg-white p-6"
+        className="space-y-4 rounded-2xl border border-line bg-surface p-7 shadow-soft"
       >
         <Input
           label="Email"
@@ -93,14 +110,23 @@ export default function Login() {
           {...register("password")}
         />
 
-        <Button type="submit" loading={isSubmitting} className="w-full">
+        <Button
+          type="submit"
+          size="lg"
+          loading={isSubmitting}
+          className="w-full"
+        >
           Log in
+          <ArrowRight size={16} />
         </Button>
-      </form>
+      </motion.form>
 
-      <p className="mt-6 text-center text-sm text-muted">
+      <p className="mt-7 text-center text-sm text-muted">
         Don't have an account?{" "}
-        <Link to="/register" className="font-semibold text-brand hover:underline">
+        <Link
+          to="/register"
+          className="link-underline font-semibold text-brand"
+        >
           Sign up
         </Link>
       </p>
