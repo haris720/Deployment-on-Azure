@@ -1,0 +1,17 @@
+node_modules
+dist
+logs
+uploads
+coverage
+
+.env
+.env.*
+!.env.production.example
+
+.git
+.gitignore
+
+tests
+*.test.ts
+
+npm-debug.log

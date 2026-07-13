@@ -1,20 +1,55 @@
-import {Router} from "express";
+import { Router } from "express";
+
+import prisma from "../config/database";
 
 
 const router = Router();
 
 
-router.get("/",(req,res)=>{
+// Azure's load balancer probes this endpoint. Returning 200 while
+// the database is unreachable would keep a broken instance in
+// rotation, so the check actually pings Postgres.
 
-res.json({
+router.get("/", async (_req, res) => {
 
-success:true,
 
-message:"My Treats API is running",
+    try {
 
-timestamp:new Date()
 
-});
+        await prisma.$queryRaw`SELECT 1`;
+
+
+        res.json({
+
+            success: true,
+
+            message: "My Treats API is running",
+
+            database: "connected",
+
+            timestamp: new Date()
+
+        });
+
+
+    }
+
+    catch (error) {
+
+        res.status(503).json({
+
+            success: false,
+
+            message: "Database unavailable",
+
+            database: "disconnected",
+
+            timestamp: new Date()
+
+        });
+
+    }
+
 
 });
 

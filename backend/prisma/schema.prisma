@@ -49,11 +49,25 @@ model Restaurant {
 
   city String
 
+
+  phone String?
+
+  email String?
+
+  website String?
+
+
+  openingTime String?
+
+  closingTime String?
+
+
   latitude Float?
 
   longitude Float?
 
-  phone String?
+
+  isActive Boolean @default(true)
 
 
   createdAt DateTime @default(now())
@@ -74,6 +88,8 @@ model Restaurant {
   images RestaurantImage[]
 
   reservations Reservation[]
+
+  listItems ListRestaurant[]
 }
 
 
@@ -114,6 +130,9 @@ model Review {
 
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 
+
+  @@unique([userId, restaurantId])
+
 }
 
 
@@ -144,14 +163,46 @@ model UserList {
 
   id Int @id @default(autoincrement())
 
-
   name String
+
+  description String?
+
+
+  createdAt DateTime @default(now())
 
 
   userId Int
 
 
   user User @relation(fields: [userId], references: [id])
+
+
+  restaurants ListRestaurant[]
+
+}
+
+
+
+model ListRestaurant {
+
+  id Int @id @default(autoincrement())
+
+
+  addedAt DateTime @default(now())
+
+
+  listId Int
+
+  restaurantId Int
+
+
+  list UserList @relation(fields: [listId], references: [id], onDelete: Cascade)
+
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+
+  @@unique([listId, restaurantId])
 
 }
 
@@ -184,7 +235,15 @@ model Reservation {
   people Int
 
 
+  specialRequest String?
+
+
   status ReservationStatus @default(PENDING)
+
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
 
 
   userId Int
@@ -218,5 +277,7 @@ enum ReservationStatus {
  CONFIRMED
 
  CANCELLED
+
+ COMPLETED
 
 }
