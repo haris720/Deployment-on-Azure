@@ -1,6 +1,5 @@
-cd ~/apps/Deployment-on-Azure/backendimport express from "express"; import cors from "cors"; import helmet from "helmet"; import morgan from 
+import express from "express"; import cors from "cors"; import helmet from "helmet"; import morgan from 
 "morgan"; import path from "path"; import swaggerUi from "swagger-ui-express";
-nano src/app.ts
 import healthRoutes from "./routes/health.routes";
 import authRoutes from "./routes/auth.routes";
 import restaurantRoutes from "./routes/restaurant/restaurant.routes";
