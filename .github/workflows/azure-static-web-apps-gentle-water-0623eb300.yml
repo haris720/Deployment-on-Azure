@@ -20,6 +20,8 @@ jobs:
           submodules: true
           lfs: false
       - name: Build And Deploy
+         env:
+          VITE_API_URL: https://api.thexyz.live/api
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
